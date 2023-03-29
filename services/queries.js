@@ -5,8 +5,7 @@ const config = require("../config");
 async function getMultiple(page = 1) {
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT id, name, released_year, githut_rank, pypl_rank, tiobe_rank 
-    FROM programming_languages LIMIT ${offset},${config.listPerPage}`
+    `SELECT * FROM Users`
   );
   const data = helper.emptyOrRows(rows);
   const meta = { page };
@@ -15,23 +14,6 @@ async function getMultiple(page = 1) {
     data,
     meta,
   };
-}
-
-async function create(programmingLanguage) {
-  const result = await db.query(
-    `INSERT INTO programming_languages 
-    (name, released_year, githut_rank, pypl_rank, tiobe_rank) 
-    VALUES 
-    ("${programmingLanguage.name}", ${programmingLanguage.released_year}, ${programmingLanguage.githut_rank}, ${programmingLanguage.pypl_rank}, ${programmingLanguage.tiobe_rank})`
-  );
-
-  let message = "Error in creating programming language";
-
-  if (result.affectedRows) {
-    message = "Programming language created successfully";
-  }
-
-  return { message };
 }
 
 async function update(id, programmingLanguage) {
@@ -60,6 +42,23 @@ async function remove(id) {
 
   if (result.affectedRows) {
     message = "Programming language deleted successfully";
+  }
+
+  return { message };
+}
+
+async function create(user) {
+  const result = await db.query(
+    `INSERT INTO Users 
+    (username, profilePic)
+    VALUES 
+    ("${user.name}", "${user.profilePic}")`
+  );
+
+  let message = "Error in creating new user";
+
+  if (result.affectedRows) {
+    message = "User created successfully";
   }
 
   return { message };
